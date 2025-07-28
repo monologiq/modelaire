@@ -11,68 +11,68 @@ jobs:
   release:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
-    
+
     permissions:
       contents: write
-      
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-        
-    - name: Verify OpenVSX PAT
-      if: steps.check_release.outputs.exists == 'false'
-      run: |
-        npm install -g ovsx
-        ovsx verify-pat ${{ github.repository_owner }} --pat $OVSX_TOKEN
-      env:
-        OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
-        
-    - name: Get package info
-      id: package
-      run: |
-        PACKAGE_VERSION=$(node -p "require('./package.json').version")
-        PACKAGE_NAME=$(node -p "require('./package.json').name")
-        echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
-        echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
-        echo "filename=$PACKAGE_NAME-$PACKAGE_VERSION.vsix" >> $GITHUB_OUTPUT
-        
-    - name: Check if release exists
-      id: check_release
-      run: |
-        if gh release view v${{ steps.package.outputs.version }} >/dev/null 2>&1; then
-          echo "exists=true" >> $GITHUB_OUTPUT
-        else
-          echo "exists=false" >> $GITHUB_OUTPUT
-        fi
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Install dependencies and build
-      if: steps.check_release.outputs.exists == 'false'
-      run: |
-        npm ci
-        npm run compile
-        npm install -g vsce
-        vsce package
-        
-    - name: Create release
-      if: steps.check_release.outputs.exists == 'false'
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: v${{ steps.package.outputs.version }}
-        name: v${{ steps.package.outputs.version }}
-        files: ${{ steps.package.outputs.filename }}
-        generate_release_notes: true
-        
-    - name: Publish to Open VSX
-      if: steps.check_release.outputs.exists == 'false'
-      run: |
-        npm install -g ovsx
-        ovsx publish ${{ steps.package.outputs.filename }} --pat $OVSX_TOKEN
-      env:
-        OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Get package info
+        id: package
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+          echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+          echo "filename=$PACKAGE_NAME-$PACKAGE_VERSION.vsix" >> $GITHUB_OUTPUT
+
+      - name: Check if release exists
+        id: check_release
+        run: |
+          if gh release view v${{ steps.package.outputs.version }} >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies and build
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          npm ci
+          npm run compile
+          npm install -g vsce
+          vsce package
+
+      - name: Verify OpenVSX PAT
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          npm install -g ovsx
+          ovsx verify-pat ${{ github.repository_owner }} --pat $OVSX_TOKEN
+        env:
+          OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+
+      - name: Create release
+        if: steps.check_release.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.package.outputs.version }}
+          name: v${{ steps.package.outputs.version }}
+          files: ${{ steps.package.outputs.filename }}
+          generate_release_notes: true
+
+      - name: Publish to Open VSX
+        if: steps.check_release.outputs.exists == 'false'
+        run: |
+          npm install -g ovsx
+          ovsx publish ${{ steps.package.outputs.filename }} --pat $OVSX_TOKEN
+        env:
+          OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
