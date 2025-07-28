@@ -60,3 +60,11 @@ jobs:
         name: v${{ steps.package.outputs.version }}
         files: ${{ steps.package.outputs.filename }}
         generate_release_notes: true
+
+    - name: Publish to Open VSX
+      if: steps.check_release.outputs.exists == 'false'
+      run: |
+        npm install -g ovsx
+        ovsx publish ${{ steps.package.outputs.filename }}
+      env:
+        OVSX_PAT: ${{ secrets.OVSX_PAT }}
