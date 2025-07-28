@@ -1,5 +1,4 @@
 import * as assert from 'assert';
-import * as vscode from 'vscode';
 import { State } from '../../state';
 
 suite('State Test Suite', () => {
