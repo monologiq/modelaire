@@ -1,5 +1,7 @@
 # Modelaire
 
+<img src="images/baudelaire-icon.png" alt="Portrait_of_Charles_Baudelaire" src="https://github.com/monologiq/vscode-modelaire.git" style="display: block; margin: 12px auto; border-radius: 10px">
+
 A simple modal editing extension for VS Code that provides normal and insert modes without keybindings.
 
 ## Features

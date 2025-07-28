@@ -4,10 +4,23 @@
   "description": "A simple modal editing extension for VS Code.",
   "publisher": "monologiq",
   "version": "0.0.5",
-  "repository": "https://github.com/monologiq/vscode-modelaire.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/monologiq/vscode-modelaire.git"
+  },
+  "icon": "images/baudelaire-icon.png",
   "engines": {
     "vscode": "^1.102.0"
   },
+  "keywords": [
+    "baudelaire",
+    "emacs",
+    "key",
+    "leader",
+    "mode",
+    "modelaire",
+    "vim"
+  ],
   "categories": [
     "Keymaps",
     "Other"
