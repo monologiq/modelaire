@@ -44,14 +44,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Download VSIX artifact
+    - name: Install dependencies and build
       if: steps.check_release.outputs.exists == 'false'
-      uses: actions/download-artifact@v4
-      with:
-        name: ${{ steps.package.outputs.filename }}
-        path: ./
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        run-id: ${{ github.event.workflow_run.id }}
+      run: |
+        npm ci
+        npm run compile
+        npm install -g vsce
+        vsce package
 
     - name: Create release
       if: steps.check_release.outputs.exists == 'false'
