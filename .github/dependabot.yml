@@ -1,21 +1,21 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-    open-pull-requests-limit: 10
-    reviewers:
-      - "monologiq"
-    assignees:
-      - "monologiq"
-    commit-message:
-      prefix: "chore"
-      prefix-development: "chore"
-      include: "scope"
+- package-ecosystem: "npm"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+    time: "09:00"
+  open-pull-requests-limit: 10
+  reviewers:
+  - "monologiq"
+  assignees:
+  - "monologiq"
+  commit-message:
+    prefix: "chore"
+    prefix-development: "chore"
+    include: "scope"
 
-    ignore:
-      - dependency-name: "@types/vscode"
-        update-types: ["version-update:semver-major"]
+  ignore:
+  - dependency-name: "@types/vscode"
+    update-types: [ "version-update:semver-major" ]
