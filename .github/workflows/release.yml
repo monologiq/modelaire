@@ -52,11 +52,12 @@ jobs:
           npm install -g vsce
           vsce package
 
-      - name: Verify OpenVSX PAT
+      - name: Verify and publish OpenVSX PAT
         if: steps.check_release.outputs.exists == 'false'
         run: |
           npm install -g ovsx
           ovsx verify-pat ${{ github.repository_owner }} --pat $OVSX_TOKEN
+          ovsx publish ${{ steps.package.outputs.filename }} --pat $OVSX_TOKEN
         env:
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
 
@@ -69,10 +70,5 @@ jobs:
           files: ${{ steps.package.outputs.filename }}
           generate_release_notes: true
 
-      - name: Publish to Open VSX
-        if: steps.check_release.outputs.exists == 'false'
-        run: |
-          npm install -g ovsx
-          ovsx publish ${{ steps.package.outputs.filename }} --pat $OVSX_TOKEN
         env:
           OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
