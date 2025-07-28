@@ -1,71 +1,93 @@
-# Escape Beta
+# Modelaire
 
-This is the README for your extension "espace". After writing up a brief description, we recommend including the following sections.
+A simple modal editing extension for VS Code that provides normal and insert modes without keybindings.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Normal Mode**: Navigate and execute commands without typing
+- **Insert Mode**: Regular typing experience
+- **Visual Status**: Clear mode indication in status bar
+- **Cursor Styles**: Block cursor in normal mode, line cursor in insert mode
+- **Selection Aware**: Extend selections while navigating in normal mode
 
-For example if there is an image subfolder under your extension project workspace:
+## Usage
 
-\!\[feature X\]\(images/feature-x.png\)
+### Mode Switching
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+- Press `i` in normal mode to enter insert mode
+- Press `Escape` in insert mode to return to normal mode
 
-## Requirements
+### Navigation (Normal Mode)
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Add these keybindings to your `keybindings.json` for basic navigation:
 
-## Extension Settings
+```json
+[
+  {
+    "key": "j",
+    "command": "cursorDownSelect",
+    "when": "modelaire.normal && editorTextFocus && editorHasSelection"
+  },
+  {
+    "key": "j",
+    "command": "cursorDown",
+    "when": "modelaire.normal && editorTextFocus && !editorHasSelection"
+  },
+  {
+    "key": "k",
+    "command": "cursorUpSelect", 
+    "when": "modelaire.normal && editorTextFocus && editorHasSelection"
+  },
+  {
+    "key": "k",
+    "command": "cursorUp",
+    "when": "modelaire.normal && editorTextFocus && !editorHasSelection"
+  },
+  {
+    "key": "h",
+    "command": "cursorLeftSelect",
+    "when": "modelaire.normal && editorTextFocus && editorHasSelection"
+  },
+  {
+    "key": "h", 
+    "command": "cursorLeft",
+    "when": "modelaire.normal && editorTextFocus && !editorHasSelection"
+  },
+  {
+    "key": "l",
+    "command": "cursorRightSelect",
+    "when": "modelaire.normal && editorTextFocus && editorHasSelection"
+  },
+  {
+    "key": "l",
+    "command": "cursorRight",
+    "when": "modelaire.normal && editorTextFocus && !editorHasSelection"
+  }
+]
+```
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+## Customization
 
-For example:
+You can customize the mode switching keys by overriding the default keybindings:
 
-This extension contributes the following settings:
+```json
+[
+  {
+    "key": "ctrl+i",
+    "command": "modelaire.enterInsertMode",
+    "when": "modelaire.normal && editorTextFocus"
+  },
+  {
+    "key": "ctrl+escape",
+    "command": "modelaire.enterNormalMode", 
+    "when": "!modelaire.normal && editorTextFocus"
+  }
+]
+```
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## Context Variables
 
-## Known Issues
+The extension provides these context variables for your keybindings:
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+- `modelaire.normal`: True when in normal mode
+- `!modelaire.normal`: True when in insert m
