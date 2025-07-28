@@ -1,8 +1,9 @@
 {
   "name": "modelaire",
   "displayName": "Modelaire",
-  "description": "A simple mode switcher for VSCode.",
+  "description": "A simple modal editing extension for VS Code.",
   "version": "0.0.1",
+  "repository": "https://github.com/monologiq/vscode-modelaire.git",
   "engines": {
     "vscode": "^1.102.0"
   },
