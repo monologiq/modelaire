@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: [ "CI" ]
+    types:
+    - completed
+    branches: [ main ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+
+    - name: Get package info
+      id: package
+      run: |
+        PACKAGE_VERSION=$(node -p "require('./package.json').version")
+        PACKAGE_NAME=$(node -p "require('./package.json').name")
+        echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
+        echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+        echo "filename=$PACKAGE_NAME-$PACKAGE_VERSION.vsix" >> $GITHUB_OUTPUT
+
+    - name: Check if release exists
+      id: check_release
+      run: |
+        if gh release view v${{ steps.package.outputs.version }} >/dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Download VSIX artifact
+      if: steps.check_release.outputs.exists == 'false'
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ steps.package.outputs.filename }}
+        path: ./
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        run-id: ${{ github.event.workflow_run.id }}
+
+    - name: Create release
+      if: steps.check_release.outputs.exists == 'false'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.package.outputs.version }}
+        name: v${{ steps.package.outputs.version }}
+        files: ${{ steps.package.outputs.filename }}
+        generate_release_notes: true
