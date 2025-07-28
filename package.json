@@ -3,7 +3,7 @@
   "displayName": "Modelaire",
   "description": "A simple modal editing extension for VS Code.",
   "publisher": "monologiq",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "repository": "https://github.com/monologiq/vscode-modelaire.git",
   "engines": {
     "vscode": "^1.102.0"

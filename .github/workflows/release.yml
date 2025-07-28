@@ -1,29 +1,37 @@
-name: Release
+name: Release from CI
 
 on:
   workflow_run:
-    workflows: [ "CI" ]
+    workflows: ["CI"]
     types:
-    - completed
-    branches: [ main ]
+      - completed
+    branches: [main]
 
 jobs:
   release:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success'
-
+    
     permissions:
       contents: write
-
+      
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
+      
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
-
+        
+    - name: Verify OpenVSX PAT
+      if: steps.check_release.outputs.exists == 'false'
+      run: |
+        npm install -g ovsx
+        ovsx verify-pat ${{ github.repository_owner }} --pat $OVSX_TOKEN
+      env:
+        OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
+        
     - name: Get package info
       id: package
       run: |
@@ -32,7 +40,7 @@ jobs:
         echo "version=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
         echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
         echo "filename=$PACKAGE_NAME-$PACKAGE_VERSION.vsix" >> $GITHUB_OUTPUT
-
+        
     - name: Check if release exists
       id: check_release
       run: |
@@ -43,7 +51,7 @@ jobs:
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        
     - name: Install dependencies and build
       if: steps.check_release.outputs.exists == 'false'
       run: |
@@ -51,7 +59,7 @@ jobs:
         npm run compile
         npm install -g vsce
         vsce package
-
+        
     - name: Create release
       if: steps.check_release.outputs.exists == 'false'
       uses: softprops/action-gh-release@v1
@@ -60,11 +68,11 @@ jobs:
         name: v${{ steps.package.outputs.version }}
         files: ${{ steps.package.outputs.filename }}
         generate_release_notes: true
-
+        
     - name: Publish to Open VSX
       if: steps.check_release.outputs.exists == 'false'
       run: |
         npm install -g ovsx
-        ovsx publish ${{ steps.package.outputs.filename }}
+        ovsx publish ${{ steps.package.outputs.filename }} --pat $OVSX_TOKEN
       env:
-        OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        OVSX_TOKEN: ${{ secrets.OVSX_TOKEN }}
