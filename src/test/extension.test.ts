@@ -4,6 +4,16 @@ import * as vscode from 'vscode';
 suite('Extension Integration Test Suite', () => {
     vscode.window.showInformationMessage('Start integration tests.');
 
+    // Ensure the extension is activated before running tests
+    suiteSetup(async () => {
+        const extension = vscode.extensions.getExtension('monologiq.modelaire');
+        if (extension && !extension.isActive) {
+            await extension.activate();
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    });
+
     test('Extension activates without errors', async () => {
         const extension = vscode.extensions.getExtension('monologiq.modelaire');
         if (extension) {
