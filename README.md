@@ -2,11 +2,6 @@
 
 A simple modal editing extension for VS Code that provides normal and insert modes without keybindings.
 
-<p align="center">
-  <img src="images/baudelaire-icon.png" alt="Portrait_of_Charles_Baudelaire">
-</p>
-
-
 ## Features
 
 - **Normal Mode**: Navigate and execute commands without typing
